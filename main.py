@@ -1,7 +1,8 @@
 import os
 import openai
+import random
 
-API_KEY = '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'
+API_KEY = 'OPENAI_API_KEY'
 os.environ['OPENAI_Key'] = API_KEY
 openai.api_key = os.environ['OPENAI_Key']
 
@@ -14,6 +15,7 @@ def main():
                  "a patient during their post-surgery follow-up with their doctor after their successful hip surgery"]
 
     keep_prompting = True
+    scenario = random.randint(0, 4)
     while keep_prompting:
         user_input = input('What is your question for the patient? Please type \'complete\' when done.\n')
 
@@ -22,7 +24,7 @@ def main():
         else:
             response = openai.Completion.create(
                 model="text-curie-001",
-                prompt=user_input + 'Please respond as if you are ' + scenarios[4],
+                prompt=user_input + 'Please respond as if you are ' + scenarios[scenario],
                 temperature=0.7,
                 max_tokens=256,
                 top_p=1,
