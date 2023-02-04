@@ -1,6 +1,7 @@
 import os
 import openai
 import whisper
+import ffmpeg
 import random
 import wave
 import time
@@ -18,7 +19,9 @@ class VoiceRecorder:
     def __init__(self):
         self.root = tk.Tk()
         self.root.resizable(False, False)
-        self.button = tk.Button(text="Record", font=("Arial", 120, "bold"), command=self.click_handler)
+        self.button = tk.Button(text="Record", 
+                                font=("Arial", 120, "bold"),
+                                command=self.click_handler)
         self.button.pack()
         self.label = tk.Label(text="00:00:00")
         self.label.pack()
@@ -36,7 +39,10 @@ class VoiceRecorder:
 
     def record(self):
         audio = pyaudio.PyAudio()
-        stream = audio.open(format=pyaudio.paInt16, channels=1, rate=44100, input=True, frames_per_buffer=1024)
+        stream = audio.open(format=pyaudio.paInt16,
+                            channels=1, rate=44100,
+                            input=True,
+                            frames_per_buffer=1024)
         frames = []
         start = time.time()
         while self.recording:
@@ -72,15 +78,9 @@ def transcribe(audio):
 
     audio = whisper.load_audio(audio)
 
-    mel = whisper.log_mel_spectrogram(audio).to(model.device)
+    result = model.transcribe(audio)
 
-    _, probs = model.detect_language(mel)
-
-    options = whisper.DecodingOptions()
-    result = whisper.decode(model, mel, options)
-    result_text = result.text
-
-    return result_text
+    return result['text']
 
 
 def chatbot():
