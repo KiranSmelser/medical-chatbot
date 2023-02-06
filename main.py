@@ -9,7 +9,7 @@ import threading
 import tkinter as tk
 import pyaudio
 
-API_KEY = 'OPENAI_API_KEY'
+API_KEY = 'API_KEY'
 os.environ['OPENAI_Key'] = API_KEY
 openai.api_key = os.environ['OPENAI_Key']
 
@@ -78,7 +78,7 @@ def transcribe(audio):
 
     audio = whisper.load_audio(audio)
 
-    result = model.transcribe(audio)
+    result = model.transcribe(audio, fp16=False)
 
     return result['text']
 
@@ -93,7 +93,16 @@ def chatbot():
     keep_prompting = True
     scenario = random.randint(0, 4)
     while keep_prompting:
-        user_input = input('What is your question for the patient? Please type \'complete\' when done.\n')
+        VoiceRecorder()
+
+        exists = True
+        i = 1
+        while exists:
+            if os.path.exists(f"input{i+1}.wav"):
+                i += 1
+            else:
+                exists = False
+        user_input = transcribe(f"./input{i}.wav")
 
         if user_input == 'complete':
             keep_prompting = False
@@ -107,21 +116,11 @@ def chatbot():
                 frequency_penalty=0,
                 presence_penalty=0
             )
-            print(response["choices"][0]["text"])
+            print(response["choices"][0]["text"].strip())
 
 
 def main():
-    VoiceRecorder()
-
-    exists = True
-    i = 1
-    while exists:
-        if os.path.exists(f"input{i+1}.wav"):
-            i += 1
-        else:
-            exists = False
-    result = transcribe(f"./input{i}.wav")
-    print(result)
+    chatbot()
 
 
 if __name__ == "__main__":
