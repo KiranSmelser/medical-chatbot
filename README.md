@@ -46,7 +46,6 @@ Project is: _complete_
 
 
 ## Acknowledgements
-Give credit here.
 - This project was completed as part of undergraduate research for AI for Physician Patient Interviewing at the University of Arizona.
 
 
